@@ -1,0 +1,13 @@
+{
+	"printWidth": 150,
+	"semi": true,
+	"singleAttributePerLine": true,
+	"singleQuote": true,
+	"tabWidth": 4,
+	"useTabs": true,
+	"overrides": [
+		{
+			"files": "*.html"
+		}
+	]
+}
