@@ -1,11 +1,11 @@
 import { index, integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
-import { characters, media } from '../../schema';
 import { characterRoleEnum } from '../enums';
+import { charactersTable, mediaTable } from '../tables';
 
 export const mediaCharactersTable = pgTable('media_characters',
   {
-    mediaId: integer('media_id').notNull().references(() => media.id, { onDelete: 'cascade' }),
-    characterId: integer('character_id').notNull().references(() => characters.id, { onDelete: 'cascade' }),
+    mediaId: integer('media_id').notNull().references(() => mediaTable.id, { onDelete: 'cascade' }),
+    characterId: integer('character_id').notNull().references(() => charactersTable.id, { onDelete: 'cascade' }),
     role: characterRoleEnum('role'),
   },
   (t) => [
