@@ -2,7 +2,7 @@ import { index, integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import { mediaRelationTypeEnum } from '../enums';
 import { mediaTable } from '../tables';
 
-export const mediaRelationsTable = pgTable('media_relations',
+export const mediaConnectionsTable = pgTable('media_relations',
   {
     mediaId: integer('media_id').notNull().references(() => mediaTable.id, { onDelete: 'cascade' }),
     relatedMediaId: integer('related_media_id').notNull().references(() => mediaTable.id, { onDelete: 'cascade' }),

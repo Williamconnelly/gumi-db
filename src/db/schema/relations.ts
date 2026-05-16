@@ -1,8 +1,6 @@
 import { relations } from 'drizzle-orm';
-import { mediaCharactersTable, mediaGenresTable, mediaRelationsTable, mediaStaffTable, mediaTagsTable, } from './junctions';
-import { characterNamesTable, charactersTable, genresTable, mediaNamesTable, mediaTable, staffOccupationsTable, staffTable, tagsTable, } from './tables';
-
-// ── Media ─────────────────────────────────────────────────
+import { mediaCharactersTable, mediaGenresTable, mediaConnectionsTable, mediaStaffTable, mediaTagsTable } from './junctions';
+import { characterNamesTable, charactersTable, genresTable, mediaNamesTable, mediaTable, staffNamesTable, staffOccupationsTable, staffTable, tagsTable, } from './tables';
 
 export const mediaRelations = relations(mediaTable, ({ many }) => ({
   names: many(mediaNamesTable),
@@ -10,25 +8,24 @@ export const mediaRelations = relations(mediaTable, ({ many }) => ({
   tags: many(mediaTagsTable),
   staff: many(mediaStaffTable),
   characters: many(mediaCharactersTable),
-  /** Relations where this media is the source (e.g. "this show has a SEQUEL") */
-  relationsFrom: many(mediaRelationsTable, { relationName: 'mediaSource' }),
-  /** Relations where this media is the target (e.g. "this show is a SEQUEL of something") */
-  relationsTo: many(mediaRelationsTable, { relationName: 'mediaTarget' }),
+  relationsFrom: many(mediaConnectionsTable, { relationName: 'mediaSource' }),
+  relationsTo: many(mediaConnectionsTable, { relationName: 'mediaTarget' }),
 }));
 
+/** [Media => Media Names] One-to-Many */
 export const mediaNamesRelations = relations(mediaNamesTable, ({ one }) => ({
   media: one(mediaTable, {
     fields: [mediaNamesTable.mediaId],
-    references: [mediaTable.id],
-  }),
+    references: [mediaTable.id]
+  })
 }));
 
-// ── Genres ────────────────────────────────────────────────
-
+// TODO
 export const genresRelations = relations(genresTable, ({ many }) => ({
   media: many(mediaGenresTable),
 }));
 
+/** [Media => Genres] Many-to-Many */
 export const mediaGenresRelations = relations(mediaGenresTable, ({ one }) => ({
   media: one(mediaTable, {
     fields: [mediaGenresTable.mediaId],
@@ -40,12 +37,12 @@ export const mediaGenresRelations = relations(mediaGenresTable, ({ one }) => ({
   }),
 }));
 
-// ── Tags ──────────────────────────────────────────────────
-
+// TODO
 export const tagsRelations = relations(tagsTable, ({ many }) => ({
   media: many(mediaTagsTable),
 }));
 
+/** [Media => Tags] Many-to-Many */
 export const mediaTagsRelations = relations(mediaTagsTable, ({ one }) => ({
   media: one(mediaTable, {
     fields: [mediaTagsTable.mediaId],
@@ -57,22 +54,7 @@ export const mediaTagsRelations = relations(mediaTagsTable, ({ one }) => ({
   }),
 }));
 
-// ── Staff ─────────────────────────────────────────────────
-
-export const staffRelations = relations(staffTable, ({ many }) => ({
-  occupations: many(staffOccupationsTable),
-  media: many(mediaStaffTable),
-  /** Characters this staff member has voiced */
-  voicedCharacters: many(mediaCharactersTable),
-}));
-
-export const staffOccupationsRelations = relations(staffOccupationsTable, ({ one }) => ({
-  staff: one(staffTable, {
-    fields: [staffOccupationsTable.staffId],
-    references: [staffTable.id],
-  }),
-}));
-
+/** [Media => Staff] Many-to-Many */
 export const mediaStaffRelations = relations(mediaStaffTable, ({ one }) => ({
   media: one(mediaTable, {
     fields: [mediaStaffTable.mediaId],
@@ -84,20 +66,29 @@ export const mediaStaffRelations = relations(mediaStaffTable, ({ one }) => ({
   }),
 }));
 
-// ── Characters ────────────────────────────────────────────
+/** [Staff => Staff Names] One-to-Many */
+export const staffNamesRelations = relations(staffNamesTable, ({ one }) => ({
+  staff: one(staffTable, {
+    fields: [staffNamesTable.staffId],
+    references: [staffTable.id],
+  }),
+}));
 
+/** [Staff => Staff Occupations] One-to-Many */
+export const staffOccupationsRelations = relations(staffOccupationsTable, ({ one }) => ({
+  staff: one(staffTable, {
+    fields: [staffOccupationsTable.staffId],
+    references: [staffTable.id],
+  }),
+}));
+
+// TODO
 export const charactersRelations = relations(charactersTable, ({ many }) => ({
   names: many(characterNamesTable),
   media: many(mediaCharactersTable),
 }));
 
-export const characterNamesRelations = relations(characterNamesTable, ({ one }) => ({
-  character: one(charactersTable, {
-    fields: [characterNamesTable.characterId],
-    references: [charactersTable.id],
-  }),
-}));
-
+/** [Media => Characters] Many-to-Many */
 export const mediaCharactersRelations = relations(mediaCharactersTable, ({ one }) => ({
   media: one(mediaTable, {
     fields: [mediaCharactersTable.mediaId],
@@ -113,17 +104,40 @@ export const mediaCharactersRelations = relations(mediaCharactersTable, ({ one }
   }),
 }));
 
-// ── Media Relations (self-referential) ────────────────────
+/** [Staff => Characters] One-to-Many */
+export const staffCharactersRelations = relations(staffTable, ({ many }) => ({
+  occupations: many(staffOccupationsTable),
+  media: many(mediaStaffTable),
+  voicedCharacters: many(mediaCharactersTable, {
+    relationName: 'voiceActor'
+  }),
+}));
 
-export const mediaRelationsTableRelations = relations(mediaRelationsTable, ({ one }) => ({
+/** [Characters => Character Names] One-to-Many */
+export const characterNamesRelations = relations(characterNamesTable, ({ one }) => ({
+  character: one(charactersTable, {
+    fields: [characterNamesTable.characterId],
+    references: [charactersTable.id],
+  }),
+}));
+
+// TODO
+export const mediaConnectionsRelations = relations(mediaConnectionsTable, ({ one }) => ({
   media: one(mediaTable, {
-    fields: [mediaRelationsTable.mediaId],
+    fields: [mediaConnectionsTable.mediaId],
     references: [mediaTable.id],
     relationName: 'mediaSource',
   }),
   relatedMedia: one(mediaTable, {
-    fields: [mediaRelationsTable.relatedMediaId],
+    fields: [mediaConnectionsTable.relatedMediaId],
     references: [mediaTable.id],
     relationName: 'mediaTarget',
   }),
 }));
+
+
+
+
+
+
+
