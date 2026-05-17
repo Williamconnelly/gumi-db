@@ -9,5 +9,11 @@
 		"esModuleInterop": true
 	},
 	"include": ["src/**/*"],
-	"exclude": ["drizzle.config.ts", "node_modules", "dist"]
+	"exclude": ["drizzle.config.ts", "node_modules", "dist"],
+	"paths": {
+		"@app/*": [""],
+		"@gumi-db/db/*": ["src/db/index.ts"],
+		"@gumi-db/http": ["src/http/index.ts"],
+		"@gumi-db/logging": ["src/logging/index.ts"]
+	}
 }
