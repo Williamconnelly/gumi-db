@@ -1,5 +1,12 @@
 export const GET_MEDIA = `
-  query GetMedia($page: Int!, $perPage: Int!) {
+  query GetMedia(
+    $page: Int
+    $perPage: Int
+    $staffPage: Int
+    $characterPage: Int
+    $relationsPage: Int
+    $recommendationsPage: Int
+  ) {
     Page(page: $page, perPage: $perPage) {
       pageInfo {
         currentPage
@@ -58,7 +65,10 @@ export const GET_MEDIA = `
           isMediaSpoiler
           rank
         }
-        relations {
+        relations(page: $relationsPage) {
+          pageInfo {
+            hasNextPage
+          }
           edges {
             relationType
             node {
@@ -66,7 +76,10 @@ export const GET_MEDIA = `
             }
           }
         }
-        characters {
+        characters(page: $characterPage) {
+          pageInfo {
+            hasNextPage
+          }
           edges {
             role
             node {
@@ -77,11 +90,28 @@ export const GET_MEDIA = `
             }
           }
         }
-        staff {
+        staff(page: $staffPage) {
+          pageInfo {
+            hasNextPage
+          }
           edges {
             role
             node {
               id
+            }
+          }
+        }
+        recommendations(page: $recommendationsPage) {
+          pageInfo {
+            hasNextPage
+          }
+          edges {
+            node {
+              id
+              rating
+              mediaRecommendation {
+                id
+              }
             }
           }
         }
