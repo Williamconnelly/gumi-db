@@ -10,3 +10,4 @@ export * from './ani-list-media-title.interface';
 export * from './ani-list-media.interface';
 export * from './ani-list-page-info.interface';
 export * from './ani-list-staff-edge.interface';
+export * from './ani-list-staff.interface';
