@@ -1,7 +1,8 @@
 import { relations } from 'drizzle-orm';
-import { mediaCharactersTable, mediaConnectionsTable, mediaGenresTable, mediaStaffTable, mediaTagsTable } from './junctions';
+import { mediaCharactersTable, mediaConnectionsTable, mediaGenresTable, mediaRecommendationsTable, mediaStaffTable, mediaTagsTable } from './junctions';
 import { characterNamesTable, charactersTable, genresTable, mediaNamesTable, mediaTable, staffNamesTable, staffOccupationsTable, staffTable, tagsTable, } from './tables';
 
+/** Media Hub Definition */
 export const mediaRelations = relations(mediaTable, ({ many }) => ({
   names: many(mediaNamesTable),
   genres: many(mediaGenresTable),
@@ -10,6 +11,8 @@ export const mediaRelations = relations(mediaTable, ({ many }) => ({
   characters: many(mediaCharactersTable),
   relationsFrom: many(mediaConnectionsTable, { relationName: 'mediaSource' }),
   relationsTo: many(mediaConnectionsTable, { relationName: 'mediaTarget' }),
+  recommendations: many(mediaRecommendationsTable, { relationName: 'mediaSource' }),
+  recommendedBy: many(mediaRecommendationsTable, { relationName: 'mediaTarget' }),
 }));
 
 /** [Media => Media Names] One-to-Many */
@@ -77,6 +80,18 @@ export const mediaConnectionsRelations = relations(mediaConnectionsTable, ({ one
     fields: [mediaConnectionsTable.relatedMediaId],
     references: [mediaTable.id],
     relationName: 'mediaTarget',
+  }),
+}));
+
+/** [Media => Recommendations] Many-to-Many */
+export const mediaRecommendationsRelations = relations(mediaRecommendationsTable, ({ one }) => ({
+  media: one(mediaTable, {
+    fields: [mediaRecommendationsTable.mediaId],
+    references: [mediaTable.id],
+  }),
+  recommendedMedia: one(mediaTable, {
+    fields: [mediaRecommendationsTable.recommendedMediaId],
+    references: [mediaTable.id],
   }),
 }));
 

@@ -5,6 +5,8 @@ import { IHttpClientConfig } from './interfaces';
 
 export class HttpClient {
 
+  public logger: Logger;
+
   protected static readonly DEFAULT_TIMEOUT: number = 1000 * 30;
 
   protected static readonly DEFAULT_RETRY_LIMIT: number = 3;
@@ -18,8 +20,6 @@ export class HttpClient {
   protected retryLimit: number;
 
   protected timeoutMs: number;
-
-  protected logger: Logger;
 
   constructor(
     config: IHttpClientConfig,
