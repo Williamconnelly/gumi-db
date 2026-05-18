@@ -4,5 +4,5 @@ export interface IAniListName {
   last?: string;
   full?: string;
   native?: string;
-  alternative?: string;
+  alternative?: string[];
 }

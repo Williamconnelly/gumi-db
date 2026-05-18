@@ -108,7 +108,7 @@ export class ScopedLogger extends Logger {
   }
 
   public override debug(message: string): void {
-    super.info(message);
+    super.debug(message);
   }
 
   protected override format(message: string): string {
