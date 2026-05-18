@@ -1,0 +1,40 @@
+import { EMediaFormat, EMediaSeason, EMediaStatus, EMediaType } from '../enums';
+import { AniListCharacterConnection, AniListMediaConnection, AniListStaffConnection } from '../types';
+import { IAniListFuzzyDate } from './ani-list-fuzzy-date.interface';
+import { IAniListImageLinks } from './ani-list-image-links.interface';
+import { IAniListMediaTag } from './ani-list-media-tag.interface';
+import { IAniListMediaTitle } from './ani-list-media-title.interface';
+
+export interface IAniListMedia {
+  id?: number;
+  idMal?: number;
+  title?: IAniListMediaTitle;
+  type?: EMediaType;
+  format?: EMediaFormat;
+  status?: EMediaStatus;
+  description?: string;
+  startDate?: IAniListFuzzyDate;
+  endDate?: IAniListFuzzyDate;
+  season?: EMediaSeason;
+  seasonYear?: number;
+  episodes?: number;
+  duration?: number;
+  chapters?: number;
+  volumes?: number;
+  countryOfOrigin?: string;
+  isLicensed?: boolean;
+  source?: MediaSource;
+  updatedAt?: number;
+  coverImage?: IAniListImageLinks;
+  genres?: string[];
+  synonyms?: string[];
+  averageScore?: number;
+  meanScore?: number;
+  popularity?: number;
+  isLocked?: boolean;
+  favourites?: number;
+  tags?: IAniListMediaTag[];
+  relations?: AniListMediaConnection;
+  characters?: AniListCharacterConnection;
+  staff?: AniListStaffConnection;
+}
