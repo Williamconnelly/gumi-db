@@ -1,6 +1,6 @@
 import { relations } from 'drizzle-orm';
-import { mediaCharactersTable, mediaConnectionsTable, mediaGenresTable, mediaRecommendationsTable, mediaStaffTable, mediaTagsTable } from './junctions';
-import { characterNamesTable, charactersTable, genresTable, mediaNamesTable, mediaTable, staffNamesTable, staffOccupationsTable, staffTable, tagsTable, } from './tables';
+import { mediaCharactersTable, mediaConnectionsTable, mediaGenresTable, mediaRecommendationsTable, mediaStaffTable, mediaStudiosTable, mediaTagsTable } from './junctions';
+import { characterNamesTable, charactersTable, genresTable, mediaNamesTable, mediaTable, staffNamesTable, staffOccupationsTable, staffTable, studiosTable, tagsTable, } from './tables';
 
 /** Media Hub Definition */
 export const mediaRelations = relations(mediaTable, ({ many }) => ({
@@ -8,6 +8,7 @@ export const mediaRelations = relations(mediaTable, ({ many }) => ({
   genres: many(mediaGenresTable),
   tags: many(mediaTagsTable),
   staff: many(mediaStaffTable),
+  studios: many(mediaStudiosTable),
   characters: many(mediaCharactersTable),
   relationsFrom: many(mediaConnectionsTable, { relationName: 'mediaSource' }),
   relationsTo: many(mediaConnectionsTable, { relationName: 'mediaTarget' }),
@@ -152,9 +153,19 @@ export const characterNamesRelations = relations(characterNamesTable, ({ one }) 
   }),
 }));
 
+/** Studios Hub Definition */
+export const studiosRelations = relations(studiosTable, ({ many }) => ({
+  media: many(mediaStudiosTable),
+}));
 
-
-
-
-
-
+/** [Media => Studios] Many-to-Many */
+export const mediaStudiosRelations = relations(mediaStudiosTable, ({ one }) => ({
+  media: one(mediaTable, {
+    fields: [mediaStudiosTable.mediaId],
+    references: [mediaTable.id],
+  }),
+  studio: one(studiosTable, {
+    fields: [mediaStudiosTable.studioId],
+    references: [studiosTable.id],
+  }),
+}));

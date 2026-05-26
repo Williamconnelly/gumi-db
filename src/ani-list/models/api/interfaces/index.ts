@@ -14,3 +14,5 @@ export * from './ani-list-recommendation-edge.interface';
 export * from './ani-list-recommendation.interface';
 export * from './ani-list-staff-edge.interface';
 export * from './ani-list-staff.interface';
+export * from './ani-list-studio-edge.interface';
+export * from './ani-list-studio.interface';

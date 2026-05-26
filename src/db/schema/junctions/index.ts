@@ -3,4 +3,5 @@ export * from './media-connections-table';
 export * from './media-genres-table';
 export * from './media-recommendations-table';
 export * from './media-staff-table';
+export * from './media-studios-table';
 export * from './media-tags-table';

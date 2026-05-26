@@ -45,6 +45,14 @@ export const GET_MEDIA_EDGES = `
             }
           }
         }
+        studios {
+          edges {
+            isMain
+            node {
+              id
+            }
+          }
+        }
         recommendations(page: $recommendationsPage) {
           pageInfo {
             hasNextPage

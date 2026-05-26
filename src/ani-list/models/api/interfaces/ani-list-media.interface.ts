@@ -1,5 +1,5 @@
 import { EMediaFormat, EMediaSeason, EMediaSource, EMediaStatus, EMediaType } from '../enums';
-import { AniListCharacterConnection, AniListMediaConnection, AniListRecommendationConnection, AniListStaffConnection } from '../types';
+import { AniListCharacterConnection, AniListMediaConnection, AniListRecommendationConnection, AniListStaffConnection, AniListStudioConnection } from '../types';
 import { IAniListFuzzyDate } from './ani-list-fuzzy-date.interface';
 import { IAniListImageLinks } from './ani-list-image-links.interface';
 import { IAniListMediaTag } from './ani-list-media-tag.interface';
@@ -38,5 +38,6 @@ export interface IAniListMedia {
   relations?: AniListMediaConnection;
   characters?: AniListCharacterConnection;
   staff?: AniListStaffConnection;
+  studios?: AniListStudioConnection;
   recommendations?: AniListRecommendationConnection;
 }

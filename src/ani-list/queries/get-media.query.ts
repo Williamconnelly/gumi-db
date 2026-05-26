@@ -97,6 +97,14 @@ export const GET_MEDIA = `
               }
             }
           }
+          studios {
+            edges {
+              isMain
+              node {
+                id
+              }
+            }
+          }
           recommendations(page: $page) {
             pageInfo {
               hasNextPage
