@@ -9,6 +9,7 @@ export * from './ani-list-media-tag.interface';
 export * from './ani-list-media-title.interface';
 export * from './ani-list-media.interface';
 export * from './ani-list-page-info.interface';
+export * from './ani-list-page.interface';
 export * from './ani-list-recommendation-edge.interface';
 export * from './ani-list-recommendation.interface';
 export * from './ani-list-staff-edge.interface';
