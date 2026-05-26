@@ -77,6 +77,7 @@ export abstract class HttpClient {
 
       return this.client.request(error.config!);
     }
+
     return Promise.reject(error);
   }
 
