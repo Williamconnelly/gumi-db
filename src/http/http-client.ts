@@ -3,34 +3,31 @@ import axiosRetry from 'axios-retry';
 import { Logger } from '../logging';
 import { IHttpClientConfig } from './interfaces';
 
-export class HttpClient {
+export abstract class HttpClient {
 
-  public logger: Logger;
+  public readonly logger: Logger;
 
   protected static readonly DEFAULT_TIMEOUT: number = 1000 * 30;
 
   protected static readonly DEFAULT_RETRY_LIMIT: number = 3;
 
-  protected baseUrl: string;
+  protected readonly baseUrl: string;
 
-  protected client: AxiosInstance;
+  protected readonly client: AxiosInstance;
 
-  protected delayMs: number;
+  protected readonly delayMs: number;
 
-  protected retryLimit: number;
+  protected readonly retryLimit: number;
 
-  protected timeoutMs: number;
+  protected readonly timeoutMs: number;
 
-  constructor(
-    config: IHttpClientConfig,
-    protected readonly clientName: string = 'HttpClient'
-  ) {
+  constructor(config: IHttpClientConfig) {
     this.baseUrl = config.baseUrl;
     this.delayMs = config?.delayMs ?? 0;
     this.timeoutMs = config?.timeoutMs ?? HttpClient.DEFAULT_TIMEOUT;
     this.retryLimit = config?.retryLimit ?? HttpClient.DEFAULT_RETRY_LIMIT;
     this.client = axios.create({ baseURL: config.baseUrl, timeout: this.timeoutMs });
-    this.logger = new Logger(this.clientName ?? 'HttpClient');
+    this.logger = new Logger(config.clientName);
 
     axiosRetry(this.client, {
       retries: this.retryLimit,
