@@ -1,15 +1,9 @@
 export const GET_MEDIA_EDGES = `
-  query GetMediaEdges(
-    $ids: [Int]
-    $staffPage: Int
-    $characterPage: Int
-    $relationsPage: Int
-    $recommendationsPage: Int
-  ) {
+  query GetMediaEdges($ids: [Int], $page: Int) {
     Page(perPage: 50) {
       media(id_in: $ids) {
         id
-        relations(page: $relationsPage) {
+        relations {
           pageInfo {
             hasNextPage
           }
@@ -20,7 +14,7 @@ export const GET_MEDIA_EDGES = `
             }
           }
         }
-        characters(page: $characterPage) {
+        characters(page: $page) {
           pageInfo {
             hasNextPage
           }
@@ -34,7 +28,7 @@ export const GET_MEDIA_EDGES = `
             }
           }
         }
-        staff(page: $staffPage) {
+        staff(page: $page) {
           pageInfo {
             hasNextPage
           }
@@ -45,15 +39,7 @@ export const GET_MEDIA_EDGES = `
             }
           }
         }
-        studios {
-          edges {
-            isMain
-            node {
-              id
-            }
-          }
-        }
-        recommendations(page: $recommendationsPage) {
+        recommendations(page: $page) {
           pageInfo {
             hasNextPage
           }

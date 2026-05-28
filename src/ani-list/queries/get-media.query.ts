@@ -1,9 +1,10 @@
 export const GET_MEDIA = `
   query GetMedia(
-      $page: Int
+      $mediaPage: Int
       $perPage: Int
+      $edgePage: Int
     ) {
-      Page(page: $page, perPage: $perPage) {
+      Page(page: $mediaPage, perPage: $perPage) {
         pageInfo {
           currentPage
           lastPage
@@ -72,7 +73,7 @@ export const GET_MEDIA = `
               }
             }
           }
-          characters(page: $page) {
+          characters(page: $edgePage) {
             pageInfo {
               hasNextPage
             }
@@ -86,7 +87,7 @@ export const GET_MEDIA = `
               }
             }
           }
-          staff(page: $page) {
+          staff(page: $edgePage) {
             pageInfo {
               hasNextPage
             }
@@ -105,7 +106,7 @@ export const GET_MEDIA = `
               }
             }
           }
-          recommendations(page: $page) {
+          recommendations(page: $edgePage) {
             pageInfo {
               hasNextPage
             }
