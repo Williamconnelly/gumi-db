@@ -71,7 +71,7 @@ export class Logger {
 
     return {
       stop: () => {
-        const duration = (performance.now() - start).toFixed(2);
+        const duration: string = (performance.now() - start).toFixed(2);
 
         this.info(`${task} completed in ${duration}ms`, fnName);
       },
