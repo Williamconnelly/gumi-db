@@ -3,6 +3,9 @@ export const GET_MEDIA = `
       $mediaPage: Int
       $perPage: Int
       $edgePage: Int
+      $type: MediaType
+      $dateGreater: FuzzyDateInt
+      $dateLesser: FuzzyDateInt
     ) {
       Page(page: $mediaPage, perPage: $perPage) {
         pageInfo {
@@ -12,7 +15,11 @@ export const GET_MEDIA = `
           perPage
           total
         }
-        media {
+        media(
+          type: $type
+          startDate_greater: $dateGreater
+          startDate_lesser: $dateLesser
+        ) {
           id
           idMal
           title {

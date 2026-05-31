@@ -1,6 +1,8 @@
-import { AniListQueries, IAniListMedia } from '.';
+import { AniListQueries, EMediaType, IAniListMedia } from '.';
 import { HttpClient } from '../http';
+import { ITimerStop, ScopedLogger } from '../logging';
 import { GetMediaDataResponse, IAniListResponse } from './responses';
+import { getAnimeFetchBounds, getMangaFetchBounds, IDateFetchBounds } from './utils';
 
 export class AniListClient extends HttpClient {
 
@@ -8,13 +10,20 @@ export class AniListClient extends HttpClient {
 
   private static readonly REQUESTS_PER_MINUTE: number = 25;
 
+  private static readonly RATE_TIMEOUT: number = 1000 * 65;
+
+  /** The number of items on a query result */
   private static readonly PAGE_SIZE: number = 50;
+
+  /** The maximum depth a page can be queried. Represents the limit of the data provided */
+  private static readonly PAGE_LIMIT: number = 100;
 
   constructor() {
     super({
       baseUrl: AniListClient.BASE_URL,
       clientName: 'AniListClient',
       delayMs: Math.ceil(60 * 1000 / AniListClient.REQUESTS_PER_MINUTE),
+      timeoutMs: AniListClient.RATE_TIMEOUT
     })
   }
 
@@ -27,26 +36,69 @@ export class AniListClient extends HttpClient {
     return response.data;
   }
 
-  public async fetchMediaPage(mediaPage: number): Promise<GetMediaDataResponse> {
-    const log = this.logger.scope('fetchMediaPage');
+  public async fetchAnimeByYear(year: number): Promise<IAniListMedia[]> {
+    const bounds: IDateFetchBounds = getAnimeFetchBounds(year);
 
-    log.info(`Fetching page ${mediaPage}...`);
-    const timer = this.logger.time(`Page ${mediaPage} fetch`, 'fetchMediaPage');
+    this.logger.info(`Fetching ANIME year ${year}...`, 'fetchAnimeByYear');
 
-    const result: GetMediaDataResponse = await this.query<GetMediaDataResponse>(AniListQueries.GET_MEDIA, {
-      mediaPage: mediaPage,
-      edgePage: 1,
-      perPage: AniListClient.PAGE_SIZE,
-    });
+    return this.fetchAllPages(EMediaType.ANIME, bounds);
+  }
 
-    timer.stop();
-    log.info(`Received ${result.Page.media.length} media — checking for incomplete edges...`);
+  public async fetchMangaByYear(year: number): Promise<IAniListMedia[]> {
+    const bounds: IDateFetchBounds[] = getMangaFetchBounds(year);
+    let results: IAniListMedia[] = [];
 
-    const hydratedResult: IAniListMedia[] = await this.fillEdges(result.Page.media);
+    for (let i = 0; i < bounds.length; i++) {
+      this.logger.info(`Fetching MANGA year ${year} Q${i + 1}...`, 'fetchMangaByYear');
 
-    result.Page.media = hydratedResult;
+      const media = await this.fetchAllPages(EMediaType.MANGA, bounds[i]);
 
-    return result;
+      results = results.concat(media);
+    }
+
+    return results;
+  }
+
+  protected async fetchAllPages(type: EMediaType, bounds: IDateFetchBounds): Promise<IAniListMedia[]> {
+    let currentPage: number = 1;
+    let allMedia: IAniListMedia[] = [];
+
+    while (true) {
+      if (currentPage >= AniListClient.PAGE_LIMIT)
+        throw new Error('Failed to complete query. AniList Query Depth Reached.');
+
+      const timer: ITimerStop = this.logger.time(`${type} page ${currentPage} [${bounds.dateGreater}-${bounds.dateLesser}]`, 'fetchAllPages');
+      let result: GetMediaDataResponse | null = null;
+
+      try {
+        result = await this.query<GetMediaDataResponse>(AniListQueries.GET_MEDIA, {
+          mediaPage: currentPage,
+          edgePage: 1,
+          perPage: AniListClient.PAGE_SIZE,
+          type,
+          dateGreater: bounds.dateGreater,
+          dateLesser: bounds.dateLesser,
+        });
+      } catch (err) {
+        throw new Error(`Failed to fetch ${type} page ${currentPage} [${bounds.dateGreater}-${bounds.dateLesser}]: ${err}`);
+      }
+
+      timer.stop();
+
+      const media: IAniListMedia[] = result.Page.media;
+      const hydratedMedia: IAniListMedia[] = await this.fillEdges(media);
+
+      allMedia = allMedia.concat(hydratedMedia);
+
+      if (!result.Page.pageInfo.hasNextPage)
+        break;
+
+      currentPage++;
+    }
+
+    this.logger.info(`Fetched ${allMedia.length} ${type} entries for [${bounds.dateGreater}-${bounds.dateLesser}]`, 'fetchAllPages');
+
+    return allMedia;
   }
 
   protected findIncompleteMedia(media: IAniListMedia[]): IAniListMedia[] {
@@ -64,7 +116,7 @@ export class AniListClient extends HttpClient {
   }
 
   protected async fillEdges(media: IAniListMedia[]): Promise<IAniListMedia[]> {
-    const log = this.logger.scope('fillEdges');
+    const log: ScopedLogger = this.logger.scope('fillEdges');
 
     const mediaMap: Map<number, IAniListMedia> = new Map(media.map(m => [m.id!, { ...m }]));
     let page: number = 2;
