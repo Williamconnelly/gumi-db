@@ -31,6 +31,7 @@ export class AniListClient extends HttpClient {
     query: string,
     variables: Record<string, any>,
   ): Promise<T> {
+    console.log('~~~~~~~~~ SENDING POST REQUEST ~~~~~~~~~~~~~~~');
     const response: IAniListResponse<T> = await this.post<IAniListResponse<T>>('/', { query, variables });
 
     return response.data;
@@ -39,7 +40,7 @@ export class AniListClient extends HttpClient {
   public async fetchAnimeByYear(year: number): Promise<IAniListMedia[]> {
     const bounds: IDateFetchBounds = getAnimeFetchBounds(year);
 
-    this.logger.info(`Fetching ANIME year ${year}...`, 'fetchAnimeByYear');
+    console.log(`Fetching ANIME year ${year}...`);
 
     return this.fetchAllPages(EMediaType.ANIME, bounds);
   }

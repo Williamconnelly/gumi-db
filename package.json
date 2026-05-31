@@ -9,8 +9,10 @@
 		"db:up": "npm run db:generate && npm run db:migrate",
 		"db:studio": "drizzle-kit studio",
 		"db:push": "drizzle-kit push",
-		"json:anime": "ts-node src/pipeline/run.ts anime",
-		"json:manga": "ts-node src/pipeline/run.ts manga"
+		"json:anime:run": "ts-node src/pipeline/run.ts anime",
+		"json:manga:run": "ts-node src/pipeline/run.ts manga",
+		"json:anime:clear": "ts-node src/pipeline/clear.ts anime",
+		"json:manga:clear": "ts-node src/pipeline/clear.ts manga"
 	},
 	"keywords": [],
 	"author": "",
