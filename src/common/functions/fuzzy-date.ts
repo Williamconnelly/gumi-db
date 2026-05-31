@@ -2,6 +2,6 @@
  * 
  * (e.g. year=1999, month=3 → 19990300)
  */
-export function fuzzyDate(year: number, month: number): number {
-  return year * 10000 + month * 100;
+export function fuzzyDate(year: number, month: number, day: number = 0): number {
+  return year * 10000 + month * 100 + day;
 }
