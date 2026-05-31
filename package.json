@@ -8,7 +8,8 @@
 		"db:migrate": "drizzle-kit migrate",
 		"db:up": "npm run db:generate && npm run db:migrate",
 		"db:studio": "drizzle-kit studio",
-		"db:push": "drizzle-kit push"
+		"db:push": "drizzle-kit push",
+		"json:run": "ts-node src/pipeline/run.ts"
 	},
 	"keywords": [],
 	"author": "",
@@ -21,8 +22,9 @@
 		"postgres": "^3.4.9"
 	},
 	"devDependencies": {
-		"@types/node": "^25.6.2",
+		"@types/node": "^25.9.1",
 		"drizzle-kit": "^0.31.10",
+		"ts-node": "^10.9.2",
 		"tsx": "^4.21.0",
 		"typescript": "^6.0.3"
 	}

@@ -1,6 +1,7 @@
 # Compiled output
 /dist
 /tmp
+/output
 
 # Node
 /node_modules
