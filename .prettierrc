@@ -1,13 +1,15 @@
 {
-	"printWidth": 150,
-	"semi": true,
-	"singleAttributePerLine": true,
-	"singleQuote": true,
-	"tabWidth": 4,
-	"useTabs": true,
-	"overrides": [
-		{
-			"files": "*.html"
-		}
-	]
+  "printWidth": 150,
+  "semi": true,
+  "singleAttributePerLine": true,
+  "singleQuote": true,
+  "tabWidth": 4,
+  "useTabs": true,
+  "endOfLine": "lf",
+  "insertFinalNewline": true,
+  "overrides": [
+    {
+      "files": "*.html"
+    }
+  ]
 }

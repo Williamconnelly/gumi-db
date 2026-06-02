@@ -12,7 +12,9 @@
 		"json:anime:run": "ts-node src/pipeline/run.ts anime",
 		"json:manga:run": "ts-node src/pipeline/run.ts manga",
 		"json:anime:clear": "ts-node src/pipeline/clear.ts anime",
-		"json:manga:clear": "ts-node src/pipeline/clear.ts manga"
+		"json:manga:clear": "ts-node src/pipeline/clear.ts manga",
+		"json:collect:characters": "ts-node src/pipeline/collector.ts characters",
+		"json:collect:staff": "ts-node src/pipeline/collector.ts staff"
 	},
 	"keywords": [],
 	"author": "",
@@ -25,10 +27,13 @@
 		"postgres": "^3.4.9"
 	},
 	"devDependencies": {
+		"@eslint/js": "^10.0.1",
 		"@types/node": "^25.9.1",
 		"drizzle-kit": "^0.31.10",
+		"eslint": "^10.4.1",
 		"ts-node": "^10.9.2",
 		"tsx": "^4.21.0",
-		"typescript": "^6.0.3"
+		"typescript": "^6.0.3",
+		"typescript-eslint": "^8.60.0"
 	}
 }
