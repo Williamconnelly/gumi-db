@@ -29,9 +29,8 @@ export class AniListClient extends HttpClient {
 
   protected async query<T>(
     query: string,
-    variables: Record<string, any>,
+    variables: Record<string, unknown>,
   ): Promise<T> {
-    console.log('~~~~~~~~~ SENDING POST REQUEST ~~~~~~~~~~~~~~~');
     const response: IAniListResponse<T> = await this.post<IAniListResponse<T>>('/', { query, variables });
 
     return response.data;
@@ -49,10 +48,10 @@ export class AniListClient extends HttpClient {
     const bounds: IDateFetchBounds[] = getMangaFetchBounds(year);
     let results: IAniListMedia[] = [];
 
-    for (let i = 0; i < bounds.length; i++) {
+    for (let i: number = 0; i < bounds.length; i++) {
       this.logger.info(`Fetching MANGA year ${year} Q${i + 1}...`, 'fetchMangaByYear');
 
-      const media = await this.fetchAllPages(EMediaType.MANGA, bounds[i]);
+      const media: IAniListMedia[] = await this.fetchAllPages(EMediaType.MANGA, bounds[i]);
 
       results = results.concat(media);
     }
@@ -69,7 +68,7 @@ export class AniListClient extends HttpClient {
         throw new Error('Failed to complete query. AniList Query Depth Reached.');
 
       const timer: ITimerStop = this.logger.time(`${type} page ${currentPage} [${bounds.dateGreater}-${bounds.dateLesser}]`, 'fetchAllPages');
-      let result: GetMediaDataResponse | null = null;
+      let result: GetMediaDataResponse | null;
 
       try {
         result = await this.query<GetMediaDataResponse>(AniListQueries.GET_MEDIA, {
@@ -81,7 +80,7 @@ export class AniListClient extends HttpClient {
           dateLesser: bounds.dateLesser,
         });
       } catch (err) {
-        throw new Error(`Failed to fetch ${type} page ${currentPage} [${bounds.dateGreater}-${bounds.dateLesser}]: ${err}`);
+        throw new Error(`Failed to fetch ${type} page ${currentPage} [${bounds.dateGreater}-${bounds.dateLesser}]`, { cause: err });
       }
 
       timer.stop();
@@ -111,7 +110,7 @@ export class AniListClient extends HttpClient {
   }
 
   protected async fetchMediaEdges(ids: number[], page: number) {
-    const data = await this.query<GetMediaDataResponse>(AniListQueries.GET_MEDIA_EDGES, { ids, page });
+    const data: GetMediaDataResponse = await this.query<GetMediaDataResponse>(AniListQueries.GET_MEDIA_EDGES, { ids, page });
 
     return data.Page.media;
   }
@@ -127,6 +126,7 @@ export class AniListClient extends HttpClient {
 
     if (!isPaginating) {
       log.info('All edges complete — no additional fetches needed');
+
       return [...mediaMap.values()];
     }
 
@@ -134,8 +134,7 @@ export class AniListClient extends HttpClient {
 
     while (isPaginating) {
       log.info(`Fetching edge page ${page} for ${incompleteIds.length}`);
-      const timer = this.logger.time(`Edge page ${page}`, 'fillEdges');
-
+      const timer: ITimerStop = this.logger.time(`Edge page ${page}`, 'fillEdges');
       const edges: IAniListMedia[] = await this.fetchMediaEdges(incompleteIds, page);
 
       timer.stop();

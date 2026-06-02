@@ -32,7 +32,7 @@ export abstract class HttpClient {
     axiosRetry(this.client, {
       retries: this.retryLimit,
       retryCondition: (err: AxiosError) => {
-        const status = err.response?.status;
+        const status: number | undefined = err.response?.status;
 
         return !status || status >= HttpStatusCode.InternalServerError;
       },
@@ -46,7 +46,7 @@ export abstract class HttpClient {
   }
 
   public async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    const response = await this.client.get<T>(url, config);
+    const response: AxiosResponse<T> = await this.client.get<T>(url, config);
 
     if (this.delayMs > 0)
       await this.sleep(this.delayMs);
@@ -55,7 +55,7 @@ export abstract class HttpClient {
   }
 
   public async post<T>(url: string, data: unknown, config?: AxiosRequestConfig): Promise<T> {
-    const response = await this.client.post<T>(url, data, config);
+    const response: AxiosResponse<T> = await this.client.post<T>(url, data, config);
 
     if (this.delayMs > 0)
       await this.sleep(this.delayMs);
@@ -69,7 +69,7 @@ export abstract class HttpClient {
 
   protected async interceptRejection(error: AxiosError): Promise<AxiosResponse> {
     if (error.response?.status === HttpStatusCode.TooManyRequests) {
-      const retryAfter = parseInt(error.response.headers['retry-after'] ?? '60', 10);
+      const retryAfter: number = parseInt(error.response.headers['retry-after'] as string ?? '60', 10);
 
       this.logger.warn(`Rate limited. Waiting ${retryAfter}s...`, 'interceptRejection');
 
