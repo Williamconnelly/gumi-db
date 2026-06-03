@@ -1,7 +1,8 @@
-import { AniListQueries, EMediaType, IAniListMedia } from '.';
+import { AniListQueries } from '.';
 import { HttpClient } from '../http';
 import { ITimerStop, ScopedLogger } from '../logging';
-import { GetMediaDataResponse, IAniListResponse } from './responses';
+import { EMediaType, IAniListMedia, IAniListMediaTag } from './models';
+import { GetMediaDataResponse, IAniListGenreResponse, IAniListResponse, IAniListTagResponse } from './responses';
 import { getAnimeFetchBounds, getMangaFetchBounds, IDateFetchBounds } from './utils';
 
 export class AniListClient extends HttpClient {
@@ -27,15 +28,6 @@ export class AniListClient extends HttpClient {
     })
   }
 
-  protected async query<T>(
-    query: string,
-    variables: Record<string, unknown>,
-  ): Promise<T> {
-    const response: IAniListResponse<T> = await this.post<IAniListResponse<T>>('/', { query, variables });
-
-    return response.data;
-  }
-
   public async fetchAnimeByYear(year: number): Promise<IAniListMedia[]> {
     const bounds: IDateFetchBounds = getAnimeFetchBounds(year);
 
@@ -57,6 +49,31 @@ export class AniListClient extends HttpClient {
     }
 
     return results;
+  }
+
+  public async fetchGenres(): Promise<string[]> {
+    try {
+      return (await this.query<IAniListGenreResponse>(AniListQueries.GET_GENRES, {}))?.GenreCollection || [];
+    } catch (err) {
+      throw new Error(`Failed to fetch Genres]`, { cause: err });
+    }
+  }
+
+  public async fetchTags(): Promise<IAniListMediaTag[]> {
+    try {
+      return (await this.query<IAniListTagResponse>(AniListQueries.GET_TAGS, {}))?.MediaTagCollection || [];
+    } catch (err) {
+      throw new Error(`Failed to fetch Tags]`, { cause: err });
+    }
+  }
+
+  protected async query<T>(
+    query: string,
+    variables: Record<string, unknown>,
+  ): Promise<T> {
+    const response: IAniListResponse<T> = await this.post<IAniListResponse<T>>('/', { query, variables });
+
+    return response.data;
   }
 
   protected async fetchAllPages(type: EMediaType, bounds: IDateFetchBounds): Promise<IAniListMedia[]> {
