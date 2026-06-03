@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { AniListClient, EMediaType, IAniListMedia } from '../ani-list';
 import { Logger, ScopedLogger } from '../logging';
-import { Pipeline } from './constants';
+import { OUTPUT_PATHS, PIPELINE_TIME } from './constants';
 import { PipelineState } from './pipeline-state';
 
 const client: AniListClient = new AniListClient();
@@ -13,7 +13,7 @@ function writeMedia(
   year: number,
   media: IAniListMedia[]
 ): void {
-  const directory: string = type === EMediaType.ANIME ? Pipeline.ANIME_DIR : Pipeline.MANGA_DIR;
+  const directory: string = type === EMediaType.ANIME ? OUTPUT_PATHS.ANIME_DIR : OUTPUT_PATHS.MANGA_DIR;
   const filePath: string = path.join(directory, `${year}.json`);
 
   fs.writeFileSync(filePath, JSON.stringify(media, null, 2), 'utf-8');
@@ -44,7 +44,7 @@ async function getMedia(type: EMediaType, state: PipelineState): Promise<void> {
 
     log.info(`Success - ${media.length} entries written to ${year} ${type}`);
 
-    if (year + 1 > Pipeline.END_YEAR) {
+    if (year + 1 > PIPELINE_TIME.END_YEAR) {
       log.info(`Success - Completed writing all ${type}`);
       break;
     } else
@@ -53,7 +53,7 @@ async function getMedia(type: EMediaType, state: PipelineState): Promise<void> {
 }
 
 async function runAnime(): Promise<void> {
-  fs.mkdirSync(Pipeline.ANIME_DIR, { recursive: true });
+  fs.mkdirSync(OUTPUT_PATHS.ANIME_DIR, { recursive: true });
 
   await getMedia(EMediaType.ANIME, new PipelineState());
 
@@ -61,7 +61,7 @@ async function runAnime(): Promise<void> {
 }
 
 async function runManga(): Promise<void> {
-  fs.mkdirSync(Pipeline.MANGA_DIR, { recursive: true });
+  fs.mkdirSync(OUTPUT_PATHS.MANGA_DIR, { recursive: true });
 
   await getMedia(EMediaType.MANGA, new PipelineState());
 

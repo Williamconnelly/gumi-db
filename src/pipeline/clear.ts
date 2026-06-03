@@ -1,13 +1,13 @@
 import * as fs from 'fs';
 import { Logger } from '../logging';
-import { Pipeline } from './constants';
+import { OUTPUT_PATHS } from './constants';
 import { PipelineState } from './pipeline-state';
 
 const logger: Logger = new Logger('Clear');
 
 function clearAnime(): void {
-  fs.rmSync(Pipeline.ANIME_DIR, { recursive: true, force: true });
-  fs.mkdirSync(Pipeline.ANIME_DIR, { recursive: true });
+  fs.rmSync(OUTPUT_PATHS.ANIME_DIR, { recursive: true, force: true });
+  fs.mkdirSync(OUTPUT_PATHS.ANIME_DIR, { recursive: true });
 
   const state: PipelineState = new PipelineState();
   state.resetAnime();
@@ -16,8 +16,8 @@ function clearAnime(): void {
 }
 
 function clearManga(): void {
-  fs.rmSync(Pipeline.MANGA_DIR, { recursive: true, force: true });
-  fs.mkdirSync(Pipeline.MANGA_DIR, { recursive: true });
+  fs.rmSync(OUTPUT_PATHS.MANGA_DIR, { recursive: true, force: true });
+  fs.mkdirSync(OUTPUT_PATHS.MANGA_DIR, { recursive: true });
 
   const state: PipelineState = new PipelineState();
   state.resetManga();

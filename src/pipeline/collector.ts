@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import path from 'path';
 import { IAniListMedia } from '../ani-list';
 import { Logger } from '../logging';
-import { Pipeline } from './constants';
+import { OUTPUT_PATHS } from './constants';
 
 const logger: Logger = new Logger('collectEdgeIds');
 
@@ -12,7 +12,7 @@ function collectEdgeIds(
 ): void {
   const ids: Set<number> = new Set<number>();
 
-  for (const dir of [Pipeline.ANIME_DIR, Pipeline.MANGA_DIR]) {
+  for (const dir of [OUTPUT_PATHS.ANIME_DIR, OUTPUT_PATHS.MANGA_DIR]) {
     const files: string[] = fs.readdirSync(dir).filter(f => f.endsWith('.json'));
 
     for (const file of files) {
@@ -29,14 +29,14 @@ function collectEdgeIds(
 
 function collectCharacterIds(): void {
   collectEdgeIds(
-    Pipeline.CHARACTER_IDS_FILE,
+    OUTPUT_PATHS.CHARACTER_IDS_FILE,
     (m) => m.characters?.edges?.map(e => e.node?.id).filter((id): id is number => id != null) || [],
   );
 }
 
 function collectStaffIds(): void {
   collectEdgeIds(
-    Pipeline.STAFF_IDS_FILE,
+    OUTPUT_PATHS.STAFF_IDS_FILE,
     m => m.staff?.edges?.map(e => e.node?.id).filter((id): id is number => id != null) || [],
   );
 }
