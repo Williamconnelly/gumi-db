@@ -11,6 +11,8 @@
 		"db:push": "drizzle-kit push",
 		"json:anime:run": "ts-node src/pipeline/run.ts anime",
 		"json:manga:run": "ts-node src/pipeline/run.ts manga",
+		"json:genres:run": "ts-node src/pipeline/fetch.ts genres",
+		"json:tags:run": "ts-node src/pipeline/fetch.ts tags",
 		"json:anime:clear": "ts-node src/pipeline/clear.ts anime",
 		"json:manga:clear": "ts-node src/pipeline/clear.ts manga",
 		"json:collect:characters": "ts-node src/pipeline/collector.ts characters",

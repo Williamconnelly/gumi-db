@@ -68,11 +68,18 @@ async function runManga(): Promise<void> {
   logger.info('Success - Manga Pipeline Complete');
 }
 
-const arg: string = process.argv[2];
+async function main(): Promise<void> {
+  const arg: string = process.argv[2];
 
-if (arg === 'anime')
-  runAnime();
-else if (arg === 'manga')
-  runManga();
-else
-  logger.error('Usage: ts-node run.ts [anime|manga]');
+  if (arg === 'anime')
+    await runAnime();
+  else if (arg === 'manga')
+    await runManga();
+  else
+    logger.error('Usage: ts-node run.ts [anime|manga]');
+}
+
+main().catch((error: string) => {
+  logger.error(error);
+  process.exit(1);
+});
