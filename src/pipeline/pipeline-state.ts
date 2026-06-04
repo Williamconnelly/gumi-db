@@ -7,6 +7,8 @@ export class PipelineState implements IPipelineState {
   public static readonly DEFAULT_STATE: IPipelineState = {
     anime: { lastCompletedYear: PIPELINE_TIME.START_YEAR - 1 },
     manga: { lastCompletedYear: PIPELINE_TIME.START_YEAR - 1 },
+    staff: { lastCompletedBatch: -1 },
+    characters: { lastCompletedBatch: -1 }
   }
 
   private _state: IPipelineState;
@@ -23,6 +25,14 @@ export class PipelineState implements IPipelineState {
     return this._state.manga;
   }
 
+  get staff() {
+    return this._state.staff;
+  }
+
+  get characters() {
+    return this._state.characters;
+  }
+
   public resetAnime(): void {
     this._state.anime = { ...PipelineState.DEFAULT_STATE.anime };
     this.save();
@@ -30,6 +40,16 @@ export class PipelineState implements IPipelineState {
 
   public resetManga(): void {
     this._state.manga = { ...PipelineState.DEFAULT_STATE.manga };
+    this.save();
+  }
+
+  public resetStaff(): void {
+    this._state.staff = { ...PipelineState.DEFAULT_STATE.staff };
+    this.save();
+  }
+
+  public resetCharacters(): void {
+    this._state.characters = { ...PipelineState.DEFAULT_STATE.characters };
     this.save();
   }
 

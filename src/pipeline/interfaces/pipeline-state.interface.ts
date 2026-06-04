@@ -5,4 +5,10 @@ export interface IPipelineState {
   manga: {
     lastCompletedYear: number;
   };
+  characters: {
+    lastCompletedBatch: number;
+  };
+  staff: {
+    lastCompletedBatch: number
+  };
 }
