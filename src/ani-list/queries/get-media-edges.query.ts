@@ -1,4 +1,4 @@
-export const GET_MEDIA_EDGES = `
+export const GET_MEDIA_EDGES: string = `
   query GetMediaEdges($ids: [Int], $page: Int) {
     Page(perPage: 50) {
       media(id_in: $ids) {

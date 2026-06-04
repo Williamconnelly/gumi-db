@@ -1,4 +1,4 @@
-export const GET_MEDIA = `
+export const GET_MEDIA: string = `
   query GetMedia(
       $mediaPage: Int
       $perPage: Int

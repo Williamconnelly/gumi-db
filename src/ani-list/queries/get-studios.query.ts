@@ -1,4 +1,4 @@
-export const GET_STUDIOS = `
+export const GET_STUDIOS: string = `
   query GetStudios($studioPage: Int, $perPage: Int) {
     Page(page: $studioPage, perPage: $perPage) {
       pageInfo {

@@ -1,8 +1,8 @@
 import { AniListQueries } from '.';
 import { HttpClient } from '../http';
 import { ITimerStop, ScopedLogger } from '../logging';
-import { EMediaType, IAniListMedia, IAniListMediaTag } from './models';
-import { GetMediaDataResponse, IAniListGenreResponse, IAniListResponse, IAniListTagResponse } from './responses';
+import { EMediaType, IAniListCharacter, IAniListMedia, IAniListMediaTag, IAniListStaff } from './models';
+import { GetCharactersDataResponse, GetMediaDataResponse, GetStaffDataResponse, IAniListGenreResponse, IAniListResponse, IAniListTagResponse } from './responses';
 import { getAnimeFetchBounds, getMangaFetchBounds, IDateFetchBounds } from './utils';
 
 export class AniListClient extends HttpClient {
@@ -49,6 +49,52 @@ export class AniListClient extends HttpClient {
     }
 
     return results;
+  }
+
+  public async fetchStaff(ids: number[]): Promise<IAniListStaff[]> {
+    const log: ScopedLogger = this.logger.scope('fetchStaff');
+
+    try {
+      const timer: ITimerStop = this.logger.time(`Staff batch [${ids[0]}…${ids[ids.length - 1]}]`, 'fetchStaff');
+
+      const result: GetStaffDataResponse = await this.query<GetStaffDataResponse>(
+        AniListQueries.GET_STAFF,
+        { ids, staffPage: 1 },
+      );
+
+      timer.stop();
+
+      const staff: IAniListStaff[] = result.Page.staff ?? [];
+
+      log.info(`Received ${staff.length}/${ids.length} staff`);
+
+      return staff;
+    } catch (err) {
+      throw new Error(`Failed to fetch staff batch starting at id ${ids[0]}`, { cause: err });
+    }
+  }
+
+  public async fetchCharacters(ids: number[]): Promise<IAniListCharacter[]> {
+    const log: ScopedLogger = this.logger.scope('fetchCharacters');
+
+    try {
+      const timer: ITimerStop = this.logger.time(`Character batch [${ids[0]}…${ids[ids.length - 1]}]`, 'fetchCharacters');
+
+      const result: GetCharactersDataResponse = await this.query<GetCharactersDataResponse>(
+        AniListQueries.GET_CHARACTERS,
+        { ids, characterPage: 1 },
+      );
+
+      timer.stop();
+
+      const characters: IAniListCharacter[] = result.Page.characters ?? [];
+
+      log.info(`Received ${characters.length}/${ids.length} characters`);
+
+      return characters;
+    } catch (err) {
+      throw new Error(`Failed to fetch character batch starting at id ${ids[0]}`, { cause: err });
+    }
   }
 
   public async fetchGenres(): Promise<string[]> {
@@ -122,7 +168,8 @@ export class AniListClient extends HttpClient {
     return media.filter((m: IAniListMedia) => (
       m.staff?.pageInfo?.hasNextPage ||
       m.characters?.pageInfo?.hasNextPage ||
-      m.recommendations?.pageInfo?.hasNextPage
+      m.recommendations?.pageInfo?.hasNextPage ||
+      m.studios?.pageInfo?.hasNextPage
     ));
   }
 

@@ -1,4 +1,4 @@
-export const GET_TAGS = `
+export const GET_TAGS: string = `
   query GetTags {
     MediaTagCollection {
       id
