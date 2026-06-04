@@ -1,8 +1,8 @@
 import { AniListQueries } from '.';
 import { HttpClient } from '../http';
 import { ITimerStop, ScopedLogger } from '../logging';
-import { EMediaType, IAniListCharacter, IAniListMedia, IAniListMediaTag, IAniListStaff } from './models';
-import { GetCharactersDataResponse, GetMediaDataResponse, GetStaffDataResponse, IAniListGenreResponse, IAniListResponse, IAniListTagResponse } from './responses';
+import { EMediaType, IAniListCharacter, IAniListMedia, IAniListMediaTag, IAniListStaff, IAniListStudio } from './models';
+import { GetCharactersDataResponse, GetMediaDataResponse, GetStaffDataResponse, GetStudiosDataResponse, IAniListGenreResponse, IAniListResponse, IAniListTagResponse } from './responses';
 import { getAnimeFetchBounds, getMangaFetchBounds, IDateFetchBounds } from './utils';
 
 export class AniListClient extends HttpClient {
@@ -95,6 +95,39 @@ export class AniListClient extends HttpClient {
     } catch (err) {
       throw new Error(`Failed to fetch character batch starting at id ${ids[0]}`, { cause: err });
     }
+  }
+
+  public async fetchStudios(): Promise<IAniListStudio[]> {
+    const log: ScopedLogger = this.logger.scope('fetchStudios');
+
+    let currentPage: number = 1;
+    let allStudios: IAniListStudio[] = [];
+
+    while (true) {
+      const timer: ITimerStop = this.logger.time(`Studios page ${currentPage}`, 'fetchStudios');
+
+      const result: GetStudiosDataResponse = await this.query<GetStudiosDataResponse>(
+        AniListQueries.GET_STUDIOS,
+        { studioPage: currentPage, perPage: AniListClient.PAGE_SIZE },
+      );
+
+      timer.stop();
+
+      const studios: IAniListStudio[] = result.Page.studios ?? [];
+
+      allStudios = allStudios.concat(studios);
+
+      log.info(`Page ${currentPage} — ${studios.length} studios (${allStudios.length} total)`);
+
+      if (!result.Page.pageInfo.hasNextPage)
+        break;
+
+      currentPage++;
+    }
+
+    log.info(`Fetched ${allStudios.length} studios`);
+
+    return allStudios;
   }
 
   public async fetchGenres(): Promise<string[]> {
