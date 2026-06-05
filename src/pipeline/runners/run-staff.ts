@@ -45,6 +45,7 @@ async function runStaff(): Promise<void> {
     }
 
     accumulated.push(...staff);
+    logger.info(`Fetched ${accumulated.length}/${chunkSize}`);
 
     if (accumulated.length >= chunkSize) {
       writeChunk(chunkIndex, accumulated);
